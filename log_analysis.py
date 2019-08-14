@@ -1,4 +1,4 @@
-#!/usr/bin/env python 3.4.3
+#!/usr/bin/env python3
 # 
 # log_analysis.py
 #
@@ -15,10 +15,10 @@ def get_most_popular_three_articles():
     conn = psycopg2.connect(database=DBNAME)
     c = conn.cursor()
     c.execute("""SELECT article.title, count(*) 
-    	           FROM (SELECT title, CONCAT('/article/', slug) AS path 
+    	           FROM (SELECT title, slug
     	                   FROM articles) AS article 
     	                JOIN log
-    	                ON log.path LIKE CONCAT(article.path, '%')
+    	                ON log.path LIKE CONCAT('/article/', article.slug)
     	       GROUP BY article.title ORDER BY count DESC limit 3""")
     rows = c.fetchall()
     conn.close()
@@ -67,6 +67,8 @@ def get_lead_to_errors():
     for content in rows:
     	print("    %s — %.1f%% errors" % (content[0].strftime("%B %d, %Y"), content[1]))
 
-get_most_popular_three_articles()
-get_most_popular_author()
-get_lead_to_errors()
+if __name__ == '__main__':
+	#Print results
+    get_most_popular_three_articles()
+    get_most_popular_author()
+    get_lead_to_errors()
